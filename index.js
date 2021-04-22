@@ -59,7 +59,7 @@ const main = async (file="microSQL.json") => {
 
   repl:
   while(true) {
-    const query = (await prompt("> ")).toLowerCase()
+    const query = await prompt("> ")
     const [command, ...parameters] = query.split(' ')
 
     switch(command) {
