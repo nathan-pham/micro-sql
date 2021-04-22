@@ -47,6 +47,21 @@ const commitDatabase = (file, db) => (
   fs.writeFile(file, JSON.stringify(db))
 )
 
+const getDataFromTable = (cols, table) => {
+  if(cols == '*') {
+    return table
+  }
+
+  cols = cols.split(", ")
+  return table.map(part => {
+    const keys = Object.keys(part)
+    return keys.reduce((acc, cur) => cols.includes(cur)
+      ? { ...acc, [cur]: part[cur] }
+      : acc
+    , {})
+  })
+}
+
 const main = async (file="microSQL.json") => {
   let db = {}
 
@@ -61,6 +76,8 @@ const main = async (file="microSQL.json") => {
   while(true) {
     const query = await prompt("> ")
     const [command, ...parameters] = query.split(' ')
+      .map(v => v.trim())
+      .filter(v => v.length)
 
     switch(command) {
       case ".exit":
@@ -83,9 +100,19 @@ const main = async (file="microSQL.json") => {
           continue
         }
 
-        const ref = db[tableName]
+        log("cols =", cols)
+        log("table =", tableName)
 
-        console.log(ref)
+        let data = getDataFromTable(cols, db[tableName])
+
+        if(rest.length) {
+          const [filter, lhs, op, rhs] = rest
+
+
+        } else {
+          log(JSON.stringify(data, null, 2))
+        }
+        // console.log(ref)
         break
       }
 
@@ -101,29 +128,6 @@ const main = async (file="microSQL.json") => {
 main()
 
 /*
-    if qs == ".help":
-      print_help()
-      break
-
-    if qs == ".showdb":
-      print(db)
-      continue
-
-    cmd, *rest = qs.split()
-
-    printd("cmd =", cmd)
-
-    if cmd == "select":
-      cols, rest = ' '.join(rest).split(' from ')
-
-      cols = parse_csv(cols)
-      printd("cols =", cols)
-
-      table_name, *rest = rest.split()
-      printd("table =", table_name)
-
-      data = get_data_from_table(table_name, cols)
-
       if rest:
         filter_cmd, *rest = rest
         printd("filter =", filter_cmd)
