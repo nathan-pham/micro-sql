@@ -73,7 +73,9 @@ const expect = (clause, expected) => {
 
 const parseLiteral = (token) => (
   isNaN(token)
-    ? token
+    ? /^['|"]/.test(token) 
+      ? token.substring(1, token.length - 1)
+      : String(token)
     : parseFloat(token)
 )
 
@@ -128,13 +130,7 @@ const main = async (file="microSQL.json") => {
 
           if(_filter == "where") {
             if(cols.includes(lhs) || cols == '*') {
-              data = data.filter(part => {
-                const l = operators[op](parseLiteral(part[lhs]), parseLiteral(rhs))
-                console.log(parseLiteral(part[lhs]), lhs, "LHS")
-                console.log(parseLiteral(part[rhs]), rhs, "RHS")
-                console.log(l, "L", part, "PART")
-                return l
-              })
+              data = data.filter(part => operators[op](parseLiteral(part[lhs]), parseLiteral(rhs)))
             }
           }
         } 
