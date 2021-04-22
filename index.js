@@ -62,6 +62,21 @@ const getDataFromTable = (cols, table) => {
   })
 }
 
+const expect = (clause, expected) => {
+  if(expected.includes(clause)) {
+    return true
+  } else {
+   log(`unexpected token "${clause}" did you mean "${expected.filter(v => v.charAt(0) == clause.charAt(0))[0] || expected[0]}"?`) 
+   return false
+  }
+}
+
+const parseLiteral = (token) => (
+  isNaN(token)
+    ? token
+    : parseFloat(token)
+)
+
 const main = async (file="microSQL.json") => {
   let db = {}
 
@@ -90,8 +105,8 @@ const main = async (file="microSQL.json") => {
       case "select": {
         const [cols, _from, tableName, ...rest] = parameters
 
-        if(_from !== "from") {
-          log(`missing "from" clause`)
+
+        if(!expect(_from, ["from"])) {
           continue
         }
 
@@ -100,19 +115,31 @@ const main = async (file="microSQL.json") => {
           continue
         }
 
-        log("cols =", cols)
-        log("table =", tableName)
-
         let data = getDataFromTable(cols, db[tableName])
 
         if(rest.length) {
-          const [filter, lhs, op, rhs] = rest
+          let [_filter, lhs, op, ...rhs] = rest
+          
+          rhs = rhs.join(' ')
 
+          if(!expect(_filter, ["where"]) || !expect(op, Object.keys(operators))) {
+            continue
+          }
 
-        } else {
-          log(JSON.stringify(data, null, 2))
-        }
-        // console.log(ref)
+          if(_filter == "where") {
+            if(cols.includes(lhs) || cols == '*') {
+              data = data.filter(part => {
+                const l = operators[op](parseLiteral(part[lhs]), parseLiteral(rhs))
+                console.log(parseLiteral(part[lhs]), lhs, "LHS")
+                console.log(parseLiteral(part[rhs]), rhs, "RHS")
+                console.log(l, "L", part, "PART")
+                return l
+              })
+            }
+          }
+        } 
+
+        log(JSON.stringify(data, null, 2))
         break
       }
 
@@ -230,11 +257,6 @@ def parse_csv(csv):
   return csv.replace(' ', '').split(',')
 
   
-def parse_literal(literal):
-  try:
-    return int(literal)
-  except ValueError:
-    return str(literal)[1:-1]
 
 
 def print_table(dataset):
