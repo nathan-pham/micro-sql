@@ -1,9 +1,9 @@
 const readline = require("readline")
 
-const DEBUG = true
+const SUPPRESS = false
 
 module.exports.log = (...args) => {
-  if(DEBUG) {
+  if(!SUPPRESS) {
     console.log(`[microSQL] ${args.join(' ')}`)
   }
 }
