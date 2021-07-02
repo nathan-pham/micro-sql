@@ -13,18 +13,6 @@ module.exports.load_db = async (file=default_db) => {
     }
 }
 
-module.exports.persist_db = (file=default_db) => {
+module.exports.persist_db = async (file=default_db) => {
     await fs.writeFile(file, JSON.stringify(db))
 }
-
-/*
-def parse_csv(csv):
-  return csv.replace(' ', '').split(',')
-
-  
-def parse_literal(literal):
-  try:
-    return int(literal)
-  except ValueError:
-    return str(literal)[1:-1]
-*/
