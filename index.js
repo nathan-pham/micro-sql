@@ -25,7 +25,12 @@ const repl = async () => {
             }
             
             case "select": {
-                let [cols, ..._rest] = rest.join(' ').split(' from ')
+                if(!rest.includes("from")) {
+                    utils.log("missing from clause")
+                    break
+                }
+
+                let [cols, ..._rest] = rest.filter(v => v !== "from")
                 let table_name = _rest.shift()
                 cols = parse.query(cols, ',')
 
@@ -33,11 +38,11 @@ const repl = async () => {
 
                 if(_rest.length) {
                     let filter_cmd = _rest.shift()
-
+                    
                     if(filter_cmd == "where") {
                         let [lhs, op, rhs] = _rest
-                        
-                        if(cols.includes(lhs)) {
+
+                        if(cols.includes(lhs) || cols.includes("*")) {
                             data = data.filter(item => (
                                 utils.operators[op](item[lhs], parse.literal(rhs))
                             ))
