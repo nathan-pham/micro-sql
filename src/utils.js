@@ -1,5 +1,7 @@
 const readline = require("readline")
 
+module.exports.log = (...args) => console.log(`[microSQL] ${args.join(' ')}`)
+
 module.exports.prompt = (question) => (
   new Promise((resolve, reject) => {
     const rl = readline.createInterface({
@@ -20,4 +22,4 @@ module.exports.operators = {
   "<": (a, b) => Number(a) < Number(b),
   ">=": (a, b) => Number(a) >= Number(b),
   "<=": (a, b) => Number(a) <= Number(b),
-}  
+}
