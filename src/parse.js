@@ -10,6 +10,8 @@ module.exports.parse_literal = (token) => (
 
 module.exports.parse_query = (query) => (
     query
+        .toLowerCase()
+        .trim()
         .split(' ')
         .map(v => v.trim())
         .filter(v => v.length)

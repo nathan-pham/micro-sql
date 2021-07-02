@@ -4,6 +4,7 @@ const { log } = require("./utils")
 let db = {}
 let default_db = "microsql.db"
 
+
 module.exports.load_db = async (file=default_db) => {
     try {
         db = JSON.parse(await fs.readFile(file))
@@ -17,5 +18,6 @@ module.exports.persist_db = async (file=default_db) => {
     await fs.writeFile(file, JSON.stringify(db))
 }
 
+module.exports.log_db = () => log(JSON.stringify(db, null, 2))
 module.exports.create_table = (table_name) => db[table_name] = []
 module.exports.delete_table = (table_name) => delete db[table_name]
