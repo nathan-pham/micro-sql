@@ -19,12 +19,16 @@ module.exports.commit = async (file=default_db) => {
 }
 
 module.exports.get_table = (table_name, cols) => (
-    db[table_name].map(item => (
-        Object.keys(item).reduce((acc, cur) => ({
-            ...acc,
-            [cur]: cols.includes(cur) ? item[cur] : undefined
-        }), {})
-    ))
+    cols.includes("*")
+        ? db[table_name]
+        : (
+            db[table_name].map(item => (
+                Object.keys(item).reduce((acc, cur) => ({
+                    ...acc,
+                    [cur]: cols.includes(cur) ? item[cur] : undefined
+                }), {})
+            ))   
+        )
 )
 
 module.exports.log = () => log(JSON.stringify(db, null, 2))
