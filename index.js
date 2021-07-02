@@ -1,29 +1,51 @@
-const { operators, prompt, log_help, log } = require("./src/utils")
-const { parse_literal, parse_query, parse_csv } = require("./src/parse")
-const { load_db, persist_db, log_db, create_table, delete_table } = require("./src/database")
+const utils = require("./src/utils")
+const parse = require("./src/parse")
+const database = require("./src/database")
 
 const repl = async () => {
-    load_db()
+    database.load()
 
     main_repl:
     while(true) {
-        const [cmd, ...rest] = parse_query(await prompt("> "))
+        let [cmd, ...rest] = parse.query(await utils.prompt("> "))
 
         switch(cmd) {
-            case ".exit": break main_repl
+            case ".exit": {
+                break main_repl
+            }
             
             case ".help": {
-                log_help()
+                utils.log_help()
                 break
             }
             
             case ".showdb": { 
-                log_db()
+                database.log()
                 break
             }
             
             case "select": {
+                let [cols, ..._rest] = rest.join(' ').split(' from ')
+                let table_name = _rest.shift()
+                cols = parse.query(cols, ',')
 
+                let data = database.get_table(table_name, cols)
+
+                if(_rest.length) {
+                    let filter_cmd = _rest.shift()
+
+                    if(filter_cmd == "where") {
+                        let [lhs, op, rhs] = _rest
+                        
+                        if(cols.includes(lhs)) {
+                            data = data.filter(item => (
+                                utils.operators[op](item[lhs], parse.literal(rhs))
+                            ))
+                        }
+                    }
+                }
+
+                utils.log(JSON.stringify(data, null, 2))
             }
 
             default: break

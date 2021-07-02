@@ -1,6 +1,4 @@
-module.exports.parse_csv = (csv) => csv.replace(' ', '').split(',')
-
-module.exports.parse_literal = (token) => (
+module.exports.literal = (token) => (
     isNaN(token)
         ? /^['|"]/.test(token) 
             ? token.substring(1, token.length - 1)
@@ -8,11 +6,10 @@ module.exports.parse_literal = (token) => (
         : parseFloat(token)
 )
 
-module.exports.parse_query = (query) => (
+module.exports.query = (query, delimiter=' ') => (
     query
-        .toLowerCase()
         .trim()
-        .split(' ')
+        .split(delimiter)
         .map(v => v.trim())
         .filter(v => v.length)
 )
