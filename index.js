@@ -103,6 +103,10 @@ const main = async (file="microSQL.json") => {
       case ".help": 
         printHelp()
         break
+      
+      case ".showdb":
+        log(JSON.stringify(db, null, 2))
+        break
 
       case "select": {
         const [cols, _from, tableName, ...rest] = parameters
