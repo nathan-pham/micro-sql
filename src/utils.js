@@ -1,6 +1,12 @@
 const readline = require("readline")
 
-module.exports.log = (...args) => console.log(`[microSQL] ${args.join(' ')}`)
+const DEBUG = true
+
+module.exports.log = (...args) => {
+  if(DEBUG) {
+    console.log(`[microSQL] ${args.join(' ')}`)
+  }
+}
 
 module.exports.prompt = (question) => (
   new Promise((resolve, reject) => {
