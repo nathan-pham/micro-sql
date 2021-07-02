@@ -16,3 +16,6 @@ module.exports.load_db = async (file=default_db) => {
 module.exports.persist_db = async (file=default_db) => {
     await fs.writeFile(file, JSON.stringify(db))
 }
+
+module.exports.create_table = (table_name) => db[table_name] = []
+module.exports.delete_table = (table_name) => delete db[table_name]
