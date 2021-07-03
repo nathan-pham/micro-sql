@@ -1,6 +1,8 @@
 const utils = require("./src/utils")
 const parse = require("./src/parse")
 const database = require("./src/database")
+const { copyFileSync } = require("fs")
+const { table } = require("console")
 
 const repl = async () => {
     database.load()
@@ -51,6 +53,27 @@ const repl = async () => {
                 }
 
                 database.log_table(data)
+                break
+            }
+
+            case "insert": {
+                let [_into, table_name, ..._rest] = rest
+                _rest = _rest.join(' ')
+
+                let [cols, row_data] = _rest.split(" values ")
+                cols = parse.query(cols.slice(1, -1), ',')
+                row_data = parse.query(row_data.slice(1, -1), ',').map(parse.literal)
+
+                let data = cols.reduce((acc, cur, i) => ({
+                    ...acc,
+                    [cur]: row_data[i]
+                }), {})
+
+                database.insert_row(table_name, data)
+                break
+            }
+
+            case "delete": {
                 break
             }
 

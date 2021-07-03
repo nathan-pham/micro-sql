@@ -31,6 +31,7 @@ module.exports.get_table = (table_name, cols) => (
         )
 )
 
+
 module.exports.log_table = (table) => {
     let keys = []
     let vals = []
@@ -54,3 +55,8 @@ module.exports.log_table = (table) => {
 module.exports.log = () => log(JSON.stringify(db, null, 2))
 module.exports.create_table = (table_name) => db[table_name] = []
 module.exports.delete_table = (table_name) => delete db[table_name]
+
+module.exports.insert_row = (table_name, data) => db[table_name].push(data)
+module.exports.delete_row = (table_name, f, lhs, rhs) => {
+    
+}
