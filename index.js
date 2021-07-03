@@ -42,11 +42,11 @@ const repl = async () => {
                     let filter_cmd = _rest.shift()
                     
                     if(filter_cmd == "where") {
-                        let [lhs, op, rhs] = _rest
+                        let [lhs, op, ...rhs] = _rest
 
                         if(cols.includes(lhs) || cols.includes("*")) {
                             data = data.filter(item => (
-                                utils.operators[op](item[lhs], parse.literal(rhs))
+                                utils.operators[op](item[lhs], parse.literal(rhs.join(' ')))
                             ))
                         }
                     }
@@ -74,6 +74,17 @@ const repl = async () => {
             }
 
             case "delete": {
+                let [_from, table_name, ..._rest] = rest
+                
+                if(_rest.length) {
+                    let filter_cmd = _rest.shift()
+
+                    if(filter_cmd == "where") {
+                        let [lhs, op, ...rhs] = _rest
+                        database.delete_row(table_name, utils.operators[op], lhs, parse.literal(rhs.join(' ')))
+                    }
+                }
+
                 break
             }
 

@@ -4,7 +4,6 @@ const { log } = require("./utils")
 let db = {}
 let default_db = "microsql.db"
 
-
 module.exports.load = async (file=default_db) => {
     try {
         db = JSON.parse(await fs.readFile(file))
@@ -32,16 +31,16 @@ module.exports.get_table = (table_name, cols) => (
 )
 
 
-module.exports.log_table = (table) => {
+const log_table = (table) => {
     let keys = []
     let vals = []
 
     for(const item of table) {
-        keys.push(Object.keys(item))
         vals.push(Object.values(item))
+        keys.push(Object.keys(item))
     }
 
-    keys = keys.flat(Infinity)
+    keys = [...new Set(keys.flat(Infinity))]
 
     let header = keys.join("\t")
     console.log(" ", header)
@@ -52,11 +51,21 @@ module.exports.log_table = (table) => {
     }
 }
 
-module.exports.log = () => log(JSON.stringify(db, null, 2))
+module.exports.log = () => Object.values(db).forEach(log_table)
+module.exports.log_table = log_table
+
 module.exports.create_table = (table_name) => db[table_name] = []
 module.exports.delete_table = (table_name) => delete db[table_name]
 
 module.exports.insert_row = (table_name, data) => db[table_name].push(data)
 module.exports.delete_row = (table_name, f, lhs, rhs) => {
-    
+    let i = 0
+
+    db[table_name] = db[table_name].filter(item => {
+        let to_delete = !f(item[lhs], rhs)
+        if(to_delete) { i++ }
+        return to_delete
+    })
+
+    log("deleted", i, "rows")
 }
