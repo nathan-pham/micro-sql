@@ -31,6 +31,26 @@ module.exports.get_table = (table_name, cols) => (
         )
 )
 
+module.exports.log_table = (table) => {
+    let keys = []
+    let vals = []
+
+    for(const item of table) {
+        keys.push(Object.keys(item))
+        vals.push(Object.values(item))
+    }
+
+    keys = keys.flat(Infinity)
+
+    let header = keys.join("\t")
+    console.log(" ", header)
+    console.log(new Array(header.length + keys.length * 4).fill('-').join(''))
+
+    for(let i = 0; i < vals.length; i++) {
+        console.log(i + 1, vals[i].join("\t"))
+    }
+}
+
 module.exports.log = () => log(JSON.stringify(db, null, 2))
 module.exports.create_table = (table_name) => db[table_name] = []
 module.exports.delete_table = (table_name) => delete db[table_name]

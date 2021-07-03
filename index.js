@@ -50,7 +50,7 @@ const repl = async () => {
                     }
                 }
 
-                utils.log(JSON.stringify(data, null, 2))
+                database.log_table(data)
             }
 
             default: break
