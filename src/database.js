@@ -30,7 +30,6 @@ module.exports.get_table = (table_name, cols) => (
         )
 )
 
-
 const log_table = (table) => {
     let keys = []
     let vals = []
@@ -43,15 +42,22 @@ const log_table = (table) => {
     keys = [...new Set(keys.flat(Infinity))]
 
     let header = keys.join("\t")
+    let divider = new Array(header.length + keys.length * 4).fill('-').join('')
     console.log(" ", header)
-    console.log(new Array(header.length + keys.length * 4).fill('-').join(''))
+    console.log(divider)
 
     for(let i = 0; i < vals.length; i++) {
         console.log(i + 1, vals[i].join("\t"))
     }
 }
 
-module.exports.log = () => Object.values(db).forEach(log_table)
+module.exports.log = () => {
+    for(const [table_name, table_values] of Object.entries(db)) {
+        console.log(`  [${table_name}]`)
+        log_table(table_values)
+        console.log()
+    }
+}
 module.exports.log_table = log_table
 
 module.exports.create_table = (table_name) => db[table_name] = []
