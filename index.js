@@ -112,9 +112,10 @@ const repl = async () => {
 repl()
 
 /**
-todo: new microsql format
+todo: new microsql format, enforce schema
 todo: encrypt file
 todo: db class, muliple databases
+todo: expect in-between words; like FROM or INTO
 {
     filename: "microsql.db",
     table_schema: {
