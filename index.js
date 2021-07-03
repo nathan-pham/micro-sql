@@ -51,11 +51,43 @@ const repl = async () => {
                 }
 
                 database.log_table(data)
+                break
+            }
+
+            case "create": {
+                let [_table, table_name, ..._rest] = rest
+                let cols = parse.query(_rest.join(' ').slice(1, -1), ',')
+
+                database.create_table(table_name, cols)
+                break
+            }
+
+            case "drop": {
+                let [_table, table_name] = rest
+                database.delete_table(table_name)
+                break
             }
 
             default: break
         }
+
+        database.commit()
     }
 }
 
 repl()
+
+/**
+todo: new microsql format
+todo: encrypt file
+todo: db class, muliple databases
+{
+    filename: "microsql.db",
+    table_schema: {
+        Username: ["username:str", "password:int"]
+    }
+    tables: {
+
+    }
+}
+*/
